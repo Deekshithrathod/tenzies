@@ -391,7 +391,7 @@ if (process.env.NODE_ENV === 'production') {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -415,110 +415,124 @@ var _reactConfetti2 = _interopRequireDefault(_reactConfetti);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function App() {
-    var _React$useState = _react2.default.useState(allNewDice()),
-        _React$useState2 = _slicedToArray(_React$useState, 2),
-        dice = _React$useState2[0],
-        setDice = _React$useState2[1];
+  var _React$useState = _react2.default.useState(allNewDice()),
+      _React$useState2 = _slicedToArray(_React$useState, 2),
+      dice = _React$useState2[0],
+      setDice = _React$useState2[1];
 
-    var _React$useState3 = _react2.default.useState(false),
-        _React$useState4 = _slicedToArray(_React$useState3, 2),
-        tenzies = _React$useState4[0],
-        setTenzies = _React$useState4[1];
+  var _React$useState3 = _react2.default.useState(false),
+      _React$useState4 = _slicedToArray(_React$useState3, 2),
+      tenzies = _React$useState4[0],
+      setTenzies = _React$useState4[1];
 
-    _react2.default.useEffect(function () {
-        var allHeld = dice.every(function (die) {
-            return die.isHeld;
-        });
-        var firstValue = dice[0].value;
-        var allSameValue = dice.every(function (die) {
-            return die.value === firstValue;
-        });
-        if (allHeld && allSameValue) {
-            setTenzies(true);
-        }
-    }, [dice]);
+  var _React$useState5 = _react2.default.useState(0),
+      _React$useState6 = _slicedToArray(_React$useState5, 2),
+      rollsCount = _React$useState6[0],
+      setRollsCount = _React$useState6[1];
 
-    function generateNewDie() {
-        return {
-            value: Math.ceil(Math.random() * 6),
-            isHeld: false,
-            id: (0, _nanoid.nanoid)()
-        };
-    }
-
-    function allNewDice() {
-        var newDice = [];
-        for (var i = 0; i < 10; i++) {
-            newDice.push(generateNewDie());
-        }
-        return newDice;
-    }
-
-    /**
-     * Challenge: Allow the user to play a new game when the
-     * button is clicked and they've already won
-     */
-
-    function rollDice() {
-        if (!tenzies) {
-            setDice(function (oldDice) {
-                return oldDice.map(function (die) {
-                    return die.isHeld ? die : generateNewDie();
-                });
-            });
-        } else {
-            setTenzies(false);
-            setDice(allNewDice());
-        }
-    }
-
-    function _holdDice(id) {
-        setDice(function (oldDice) {
-            return oldDice.map(function (die) {
-                return die.id === id ? Object.assign({}, die, { isHeld: !die.isHeld }) : die;
-            });
-        });
-    }
-
-    var diceElements = dice.map(function (die) {
-        return _react2.default.createElement(_Die2.default, {
-            key: die.id,
-            value: die.value,
-            isHeld: die.isHeld,
-            holdDice: function holdDice() {
-                return _holdDice(die.id);
-            }
-        });
+  _react2.default.useEffect(function () {
+    var allHeld = dice.every(function (die) {
+      return die.isHeld;
     });
+    var firstValue = dice[0].value;
+    var allSameValue = dice.every(function (die) {
+      return die.value === firstValue;
+    });
+    if (allHeld && allSameValue) {
+      setTenzies(true);
+    }
+  }, [dice]);
 
-    return _react2.default.createElement(
-        "main",
-        null,
-        tenzies && _react2.default.createElement(_reactConfetti2.default, null),
-        _react2.default.createElement(
-            "h1",
-            { className: "title" },
-            "Tenzies"
-        ),
-        _react2.default.createElement(
-            "p",
-            { className: "instructions" },
-            "Roll until all dice are the same. Click each die to freeze it at its current value between rolls."
-        ),
-        _react2.default.createElement(
-            "div",
-            { className: "dice-container" },
-            diceElements
-        ),
-        _react2.default.createElement(
-            "button",
-            {
-                className: "roll-dice",
-                onClick: rollDice
-            },
-            tenzies ? "New Game" : "Roll"
-        )
-    );
+  function generateNewDie() {
+    return {
+      value: Math.ceil(Math.random() * 6),
+      isHeld: false,
+      id: (0, _nanoid.nanoid)()
+    };
+  }
+
+  function allNewDice() {
+    var newDice = [];
+    for (var i = 0; i < 10; i++) {
+      newDice.push(generateNewDie());
+    }
+    // setRollsCount();
+    return newDice;
+  }
+
+  /**
+   * Challenge: Allow the user to play a new game when the
+   * button is clicked and they've already won
+   */
+
+  function rollDice() {
+    if (!tenzies) {
+      setRollsCount(function (prevCount) {
+        return prevCount + 1;
+      });
+      setDice(function (oldDice) {
+        return oldDice.map(function (die) {
+          return die.isHeld ? die : generateNewDie();
+        });
+      });
+    } else {
+      setRollsCount(0);
+      setTenzies(false);
+      setDice(allNewDice());
+    }
+  }
+
+  function _holdDice(id) {
+    setDice(function (oldDice) {
+      return oldDice.map(function (die) {
+        return die.id === id ? Object.assign({}, die, { isHeld: !die.isHeld }) : die;
+      });
+    });
+  }
+
+  var diceElements = dice.map(function (die) {
+    return _react2.default.createElement(_Die2.default, {
+      key: die.id,
+      value: die.value,
+      isHeld: die.isHeld,
+      holdDice: function holdDice() {
+        return _holdDice(die.id);
+      }
+    });
+  });
+
+  return _react2.default.createElement(
+    "main",
+    null,
+    tenzies && _react2.default.createElement(_reactConfetti2.default, null),
+    _react2.default.createElement(
+      "h1",
+      { className: "title" },
+      "Tenzies"
+    ),
+    _react2.default.createElement(
+      "p",
+      { className: "instructions" },
+      "Roll until all dice are the same. Click each die to freeze it at its current value between rolls."
+    ),
+    _react2.default.createElement(
+      "div",
+      { className: "dice-container" },
+      diceElements
+    ),
+    _react2.default.createElement(
+      "button",
+      { className: "roll-dice", onClick: rollDice },
+      tenzies ? "New Game" : "Roll"
+    ),
+    _react2.default.createElement(
+      "p",
+      null,
+      "Rolls: ",
+      rollsCount,
+      " "
+    )
+  );
 }
 
 /***/ }),
